@@ -18,14 +18,14 @@ var app = app || {};
 
 		// Filter down the list of all todo items that are finished.
 		completed: function () {
-			return this.where({completed: true});
+            return this.where({completed: true});
 		},
 
 		// Filter down the list to only todo items that are still not finished.
 		remaining: function () {
 			return this.where({completed: false});
 		},
-
+      
 		// We keep the Todos in sequential order, despite being saved by unordered
 		// GUID in the database. This generates the next order number for new items.
 		nextOrder: function () {
@@ -33,7 +33,21 @@ var app = app || {};
 		},
 
 		// Todos are sorted by their original insertion order.
-		comparator: 'order'
+		comparator: function (first, second) {
+          var firstp = first.get('priority');
+          var secondp = second.get('priority');
+          var firsto = first.get('order');
+          var secondo = second.get('order');
+          
+          if (firstp && !secondp)
+              return -1;
+          if (!firstp && secondp)
+              return 1;
+          if (firsto <= secondo)
+              return -1;
+          if (firsto >= secondo)
+              return 1;
+        }
 	});
 
 	// Create our global collection of **Todos**.
